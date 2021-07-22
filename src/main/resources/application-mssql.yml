@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: 'jdbc:sqlserver://localhost:1433;databaseName=Volcano_Island_Reservations;'
+    username: 'sa'
+    password: 'Password01'
+    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
