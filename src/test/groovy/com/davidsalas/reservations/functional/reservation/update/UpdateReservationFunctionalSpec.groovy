@@ -1,4 +1,4 @@
-package com.davidsalas.reservations.reservation.update
+package com.davidsalas.reservations.functional.reservation.update
 
 import com.davidsalas.reservations.FunctionalTestConfiguration
 import com.davidsalas.reservations.controller.ReservationController

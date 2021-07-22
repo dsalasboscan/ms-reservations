@@ -5,13 +5,16 @@ import com.davidsalas.reservations.persistence.entity.ReservedDay
 import java.time.LocalDate
 import java.util.stream.Collectors
 
-// TODO add comment that explains the class
+/*
+    The database used for the functional tests is shared across tests, this class has the intention to avoid that
+    tests interfere with each other, that could happen if those tests overlap on modifications to reserved days and
+    violate the unique constraint that avoid two concurrent request to reserve the campsite.
+ */
 class DateRangeGenerator {
 
     // Valid scenarios
     public static final String DAY_ONE_TO_DAY_TWO = "DAY_ONE_TO_DAY_TWO"
     public static final String DAY_THREE_TO_DAY_FIVE = "DAY_THREE_TO_DAY_FIVE"
-    public static final String DAY_SIX_TO_DAY_SEVEN = "DAY_SIX_TO_DAY_SEVEN"
     public static final String DAY_EIGHT_TO_DAY_TEN = "DAY_EIGHT_TO_DAY_TEN"
     public static final String DAY_ELEVEN_TO_DAY_THIRTEEN = "DAY_ELEVEN_TO_DAY_THIRTEEN"
     public static final String DAY_FOURTEEN_TO_DAY_SEVENTEEN = "DAY_FOURTEEN_TO_DAY_SEVENTEEN"
@@ -36,11 +39,6 @@ class DateRangeGenerator {
             case DAY_THREE_TO_DAY_FIVE:
                 def arrivalDate = LocalDate.now().plusDays(3)
                 def departureDate = arrivalDate.plusDays(2)
-                return new DateRangeInfo(arrivalDate, departureDate, generateReservedDays(arrivalDate, departureDate))
-                break
-            case DAY_SIX_TO_DAY_SEVEN:
-                def arrivalDate = LocalDate.now().plusDays(6)
-                def departureDate = arrivalDate.plusDays(1)
                 return new DateRangeInfo(arrivalDate, departureDate, generateReservedDays(arrivalDate, departureDate))
                 break
             case DAY_EIGHT_TO_DAY_TEN:
@@ -99,7 +97,7 @@ class DateRangeGenerator {
                 break
             case ARRIVAL_DATE_WITH_MORE_THAN_ONE_MONTH_OF_ANTICIPATION:
                 def arrivalDate = LocalDate.now().plusDays(40)
-                def departureDate =arrivalDate.plusDays(1)
+                def departureDate = arrivalDate.plusDays(1)
                 return new DateRangeInfo(arrivalDate, departureDate, generateReservedDays(arrivalDate, departureDate))
                 break
             default:

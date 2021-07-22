@@ -1,4 +1,4 @@
-package com.davidsalas.reservations.reservation.delete
+package com.davidsalas.reservations.functional.reservation.delete
 
 import com.davidsalas.reservations.FunctionalTestConfiguration
 import com.davidsalas.reservations.controller.ReservationController

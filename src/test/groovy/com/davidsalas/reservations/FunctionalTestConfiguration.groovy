@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = "test_functional")
 abstract class FunctionalTestConfiguration extends Specification {
 
     private static sqlServerContainer = new MSSQLServerContainer("mcr.microsoft.com/mssql/server:2019-latest")

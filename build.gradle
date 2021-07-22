@@ -66,6 +66,8 @@ dependencies {
 
 	/* Persistence dependencies */
 	runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+	testImplementation("com.h2database:h2:1.4.194")
+	implementation("com.h2database:h2:1.4.194")
 
 	/* Spock + Groovy dependencies */
 	testImplementation("org.codehaus.groovy:groovy-all:${groovyVersion}")

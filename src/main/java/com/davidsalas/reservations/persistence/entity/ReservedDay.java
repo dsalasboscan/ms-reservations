@@ -1,23 +1,30 @@
 package com.davidsalas.reservations.persistence.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity(name = "ReservedDay")
-@Table(name = "ReservedDays")
+import static com.davidsalas.reservations.util.DatabaseConstants.RESERVED_DAYS_TABLE_NAME;
+import static com.davidsalas.reservations.util.DatabaseConstants.RESERVED_DAY_UNIQUE_CONSTRAINT_NAME;
+
+@Entity
+@Table(name = RESERVED_DAYS_TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"day"},
+                name= RESERVED_DAY_UNIQUE_CONSTRAINT_NAME
+        )
+})
 public class ReservedDay {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "day", unique = true)
     private LocalDate day;
 
     public ReservedDay(LocalDate day) {

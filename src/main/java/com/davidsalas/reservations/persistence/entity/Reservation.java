@@ -1,11 +1,6 @@
 package com.davidsalas.reservations.persistence.entity;
 
 import com.davidsalas.reservations.model.enums.ReservationStatusEnum;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity(name = "Reservation")
-@Table(name = "Reservations")
+import static com.davidsalas.reservations.util.DatabaseConstants.RESERVATIONS_TABLE_NAME;
+
+@Entity
+@Table(name = RESERVATIONS_TABLE_NAME)
 public class Reservation {
 
     @Id

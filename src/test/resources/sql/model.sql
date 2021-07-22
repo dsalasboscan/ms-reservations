@@ -54,7 +54,8 @@ SET IDENTITY_INSERT [dbo].[ReservedDays] ON;
 
 INSERT [dbo].[ReservedDays] ([id], [day], [reservation_id]) VALUES
 (100003, '2030-01-10', 10002),
-(100004, '2030-01-12', 10002);
+(100004, '2030-01-11', 10002),
+(100005, '2030-01-12', 10002);
 
 SET IDENTITY_INSERT [dbo].[ReservedDays] OFF;
 

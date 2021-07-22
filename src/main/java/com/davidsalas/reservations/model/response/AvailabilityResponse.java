@@ -1,5 +1,6 @@
 package com.davidsalas.reservations.model.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -15,5 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 public class AvailabilityResponse {
     private SelectedDateRange selectedDateRange;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private List<LocalDate> availableDates;
 }

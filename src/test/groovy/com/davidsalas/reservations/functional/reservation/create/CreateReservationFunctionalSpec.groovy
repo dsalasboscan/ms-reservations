@@ -1,4 +1,4 @@
-package com.davidsalas.reservations.reservation.create
+package com.davidsalas.reservations.functional.reservation.create
 
 import com.davidsalas.reservations.FunctionalTestConfiguration
 import com.davidsalas.reservations.controller.ReservationController
@@ -49,8 +49,8 @@ class CreateReservationFunctionalSpec extends FunctionalTestConfiguration {
                 .build()
     }
 
-    def "given a valid reservation will al days available then create reservation"() {
-        given:("A reservation request for valid range day 1 to day 2 of a valid data range")
+    def "given a valid reservation with all days available then create reservation"() {
+        given:("A reservation request for range day 1 to day 2 of a valid data range")
         def dateRangeInfo = DateRangeGenerator.getDateRangeInfo(DateRangeGenerator.DAY_ONE_TO_DAY_TWO)
 
         def arrivalDate = dateRangeInfo.getArrivalDate()
@@ -72,7 +72,7 @@ class CreateReservationFunctionalSpec extends FunctionalTestConfiguration {
     }
 
     def "given an invalid reservation with at least one of the days already reserved, then return error and don't create reservation"() {
-        given:("A reservation request for valid range day 3 to day 5 of a valid data range that exist on database")
+        given:("A reservation request for date range day 3 to 5 of a valid data range that exist on database")
         def dateRangeInfo = DateRangeGenerator.getDateRangeInfo(DateRangeGenerator.DAY_THREE_TO_DAY_FIVE)
 
         def arrivalDate = dateRangeInfo.getArrivalDate()

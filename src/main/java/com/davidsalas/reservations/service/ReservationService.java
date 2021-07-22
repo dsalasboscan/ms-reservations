@@ -1,5 +1,6 @@
 package com.davidsalas.reservations.service;
 
+import com.davidsalas.reservations.exception.BadRequestException;
 import com.davidsalas.reservations.exception.NotFountException;
 import com.davidsalas.reservations.model.enums.ReservationStatusEnum;
 import com.davidsalas.reservations.model.mapper.ReservationResponseMapper;
@@ -11,15 +12,22 @@ import com.davidsalas.reservations.persistence.entity.Reservation;
 import com.davidsalas.reservations.persistence.entity.ReservedDay;
 import com.davidsalas.reservations.persistence.repository.ReservationRepository;
 import com.davidsalas.reservations.service.validation.ReservationValidationService;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static com.davidsalas.reservations.model.enums.ErrorCodeEnum.DATE_ALREADY_RESERVED;
 import static com.davidsalas.reservations.model.enums.ErrorCodeEnum.RESERVATION_NOT_FOUND;
+import static com.davidsalas.reservations.util.DatabaseConstants.RESERVED_DAY_UNIQUE_CONSTRAINT_NAME;
 import static com.davidsalas.reservations.util.ErrorMessageConstants.RESERVATION_NOT_FOUND_ERROR_MSG;
+import static com.davidsalas.reservations.util.ErrorMessageConstants.SOME_DATE_ALREADY_RESERVED_ERROR_MSG;
 
 @Service
 public class ReservationService {
@@ -32,18 +40,14 @@ public class ReservationService {
 
     private final ReservationValidationService reservationValidationService;
 
-    private final PersistenceExceptionHandlerService persistenceExceptionHandlerService;
-
     public ReservationService(ReservationRepository reservationRepository,
                               ReservationResponseMapper reservationResponseMapper,
                               UpdateReservationMapper updateReservationMapper,
-                              ReservationValidationService reservationValidationService,
-                              PersistenceExceptionHandlerService persistenceExceptionHandlerService) {
+                              ReservationValidationService reservationValidationService) {
         this.reservationRepository = reservationRepository;
         this.reservationResponseMapper = reservationResponseMapper;
         this.updateReservationMapper = updateReservationMapper;
         this.reservationValidationService = reservationValidationService;
-        this.persistenceExceptionHandlerService = persistenceExceptionHandlerService;
     }
 
     public ReservationResponse searchReservation(Long id) {
@@ -63,7 +67,7 @@ public class ReservationService {
 
         Reservation reservation = new Reservation(request.getFullName(), request.getEmail(), arrivalDate, departureDate, daysToReserve);
 
-        persistenceExceptionHandlerService.handle(() -> reservationRepository.save(reservation));
+        handleReservationDbOperation(() -> reservationRepository.save(reservation));
 
         return reservationResponseMapper.map(reservation);
     }
@@ -79,7 +83,7 @@ public class ReservationService {
 
         Reservation updatedReservation = updateReservationMapper.map(reservation, request);
 
-        persistenceExceptionHandlerService.handle(() -> reservationRepository.save(updatedReservation));
+        handleReservationDbOperation(() -> reservationRepository.save(updatedReservation));
 
         return reservationResponseMapper.map(updatedReservation);
     }
@@ -90,10 +94,31 @@ public class ReservationService {
                 new NotFountException(RESERVATION_NOT_FOUND.name(), String.format(RESERVATION_NOT_FOUND_ERROR_MSG, id)));
 
         reservation.setStatus(ReservationStatusEnum.CANCELLED);
+        reservation.setCancelledAt(LocalDateTime.now());
         reservation.getReservedDays().clear();
 
-        persistenceExceptionHandlerService.handle(() -> reservationRepository.save(reservation));
+        handleReservationDbOperation(() -> reservationRepository.save(reservation));
 
         return reservationResponseMapper.map(reservation);
+    }
+
+    private <T> void handleReservationDbOperation(Supplier<T> process) {
+        try {
+            process.get();
+        } catch (DataIntegrityViolationException e) {
+            if (!(e.getCause() instanceof ConstraintViolationException)) {
+                throw e;
+            }
+
+            ConstraintViolationException constraintEx = (ConstraintViolationException) e.getCause();
+
+            Throwable sqlServerException = constraintEx.getCause();
+
+            if (sqlServerException.getMessage().contains(RESERVED_DAY_UNIQUE_CONSTRAINT_NAME)) {
+                throw new BadRequestException(DATE_ALREADY_RESERVED.name(), SOME_DATE_ALREADY_RESERVED_ERROR_MSG);
+            }
+
+            throw e;
+        }
     }
 }

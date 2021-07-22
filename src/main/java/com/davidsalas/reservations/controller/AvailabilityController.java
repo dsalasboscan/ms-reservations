@@ -30,7 +30,6 @@ public class AvailabilityController {
     @ResponseStatus(HttpStatus.OK)
     public AvailabilityResponse checkCampsiteAvailability(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                           @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        LOGGER.info("Init check of availability of campsite between date range from {} to {}", from, to);
         AvailabilityResponse availabilityResponse = availabilityService.checkAvailability(from, to);
         LOGGER.info("Finish check of availability of campsite with result {}", availabilityResponse);
         return availabilityResponse;

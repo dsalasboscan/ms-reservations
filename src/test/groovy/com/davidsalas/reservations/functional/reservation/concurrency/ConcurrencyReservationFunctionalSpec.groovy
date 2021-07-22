@@ -1,9 +1,11 @@
-package com.davidsalas.reservations.reservation.concurrency
+package com.davidsalas.reservations.functional.reservation.concurrency
 
 import com.davidsalas.reservations.FunctionalTestConfiguration
 import com.davidsalas.reservations.controller.ReservationController
 import com.davidsalas.reservations.exception.handler.GlobalControllerAdvice
 import com.davidsalas.reservations.model.request.CreateReservationRequest
+import com.davidsalas.reservations.persistence.entity.Reservation
+import com.davidsalas.reservations.persistence.entity.ReservedDay
 import com.davidsalas.reservations.persistence.repository.AvailabilityRepository
 import com.davidsalas.reservations.persistence.repository.ReservationRepository
 import com.davidsalas.reservations.util.DateRangeGenerator
@@ -67,7 +69,9 @@ class ConcurrencyReservationFunctionalSpec extends FunctionalTestConfiguration {
                 List.of(reservationRequest1, reservationRequest2, reservationRequest3, reservationRequest4,
                         reservationRequest5, reservationRequest6, reservationRequest7, reservationRequest8)
 
-        when:
+        List<Reservation> reservations = reservationRepository.findAll()
+
+        when:("Create reservation endpoint is called 8 times")
         Future<?> futureResponse = executorService.submit(
                 { -> reservationRequests.parallelStream().forEach({ it -> doPostRequest(it) }) })
 
@@ -75,8 +79,8 @@ class ConcurrencyReservationFunctionalSpec extends FunctionalTestConfiguration {
             Thread.sleep(300)
         }
 
-        then:
-        reservationRepository.findAll().size() == 3
+        then:("Only one new reservation is persisted in db")
+        reservationRepository.findAll().size() == reservations.size() + 1
     }
 
     def doPostRequest(CreateReservationRequest createReservationRequest) {

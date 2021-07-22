@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: 'jdbc:sqlserver://${test.server.sql-host}:${test.server.sql-port};databaseName=Volcano_Island_Reservations;'
+    url: 'jdbc:h2:mem:Volcano_Island_Reservations'
     username: 'sa'
-    password: 'A_Str0ng_Required_Password'
-    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    password: ''
+    driverClassName: org.h2.Driver
   jpa:
     hibernate:
       naming:

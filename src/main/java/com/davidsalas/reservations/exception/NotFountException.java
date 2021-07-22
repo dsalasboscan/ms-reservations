@@ -1,6 +1,5 @@
 package com.davidsalas.reservations.exception;
 
-import com.davidsalas.reservations.exception.HttpException;
 import org.springframework.http.HttpStatus;
 
 public class NotFountException extends HttpException {

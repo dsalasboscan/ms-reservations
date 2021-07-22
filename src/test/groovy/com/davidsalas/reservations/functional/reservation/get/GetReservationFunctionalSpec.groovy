@@ -1,4 +1,4 @@
-package com.davidsalas.reservations.reservation.get
+package com.davidsalas.reservations.functional.reservation.get
 
 import com.davidsalas.reservations.FunctionalTestConfiguration
 import com.davidsalas.reservations.controller.ReservationController
