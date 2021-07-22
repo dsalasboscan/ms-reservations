@@ -59,7 +59,7 @@ public class ReservationService {
 
         reservationValidationService.validateSelectedDatesToReserve(arrivalDate, departureDate);
 
-        List<ReservedDay> daysToReserve = arrivalDate.datesUntil(departureDate).map(ReservedDay::new).collect(Collectors.toList());
+        List<ReservedDay> daysToReserve = arrivalDate.datesUntil(departureDate.plusDays(1)).map(ReservedDay::new).collect(Collectors.toList());
 
         Reservation reservation = new Reservation(request.getFullName(), request.getEmail(), arrivalDate, departureDate, daysToReserve);
 

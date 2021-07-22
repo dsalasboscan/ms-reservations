@@ -57,7 +57,7 @@ class CreateReservationFunctionalSpec extends FunctionalTestConfiguration {
         def departureDate = dateRangeInfo.getDepartureDate()
         def reservationRequest = createReservationRequest(arrivalDate, departureDate)
 
-        expect:
+        expect:("Call the service and reservation is created")
         doPostRequest(reservationRequest)
                 .andExpect(status().is(201))
                 .andExpect(jsonPath('$.id', notNullValue()))
@@ -67,6 +67,8 @@ class CreateReservationFunctionalSpec extends FunctionalTestConfiguration {
                 .andExpect(jsonPath('$.departure_date', equalTo(departureDate.toString())))
                 .andExpect(jsonPath('$.status', equalTo(ReservationStatusEnum.ACTIVE.toString())))
 
+        and:("day 1 and 2 of a valid date range exist on database")
+        availabilityRepository.getUnavailableDates(arrivalDate, departureDate).size() == 2
     }
 
     def "given an invalid reservation with at least one of the days already reserved, then return error and don't create reservation"() {
@@ -93,13 +95,10 @@ class CreateReservationFunctionalSpec extends FunctionalTestConfiguration {
         def departureDate = dateRangeInfo.getDepartureDate()
         def request = createReservationRequest(arrivalDate, departureDate)
 
-        when:
+        expect:
         doPostRequest(request)
             .andExpect(status().is(400))
             .andExpect(jsonPath('$.error_message', equalTo(ErrorMessageConstants.EXCEEDED_MAXIMUM_STAY_ERROR_MSG)))
-
-        then:
-        0 * reservationRepository.save(_)
     }
 
     def "given a reservation with invalid range, then return error message and don't do reservation"() {
